@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() {
   runApp(const yukHikingApp());
 }
@@ -27,6 +29,7 @@ MaterialColor createMaterialColor(Color color) {
 
 class yukHikingApp extends StatelessWidget {
   const yukHikingApp({Key? key}) : super(key: key);
+  
 
   // This widget is the root of your application.
   @override
@@ -36,6 +39,10 @@ class yukHikingApp extends StatelessWidget {
       title: 'yukHiking! Mobile Application',
       theme: ThemeData(primarySwatch: createMaterialColor(Color(0xFFA5D5FF))),
       home: const MyHomePage(title: 'yukHiking!'),
+      routes: {
+        "/profile/edit": (context) => const EditProfilePage(),
+      },
+      navigatorKey: navigatorKey,
     );
   }
 }
@@ -192,6 +199,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     ),
+    // Halaman Profile
     Column(
       children: [
         Container(
@@ -230,8 +238,8 @@ class _MyHomePageState extends State<MyHomePage> {
             alignment: Alignment.centerLeft,
             height: 80,
             decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 204, 231, 255),
-                borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              color: Color.fromARGB(255, 204, 231, 255),
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
             child: Row(
               children: [
                 const Icon(
@@ -242,23 +250,27 @@ class _MyHomePageState extends State<MyHomePage> {
                   padding: EdgeInsets.only(right: 10),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    navigatorKey.currentState?.pushNamed("/profile/edit");
+                  },
                   child: const Text('Edit Profile',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black,
-                      )),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                    )
+                  ),
                 )
               ],
-            )),
+            )
+          ),
         Container(
             margin: const EdgeInsets.all(10),
             padding: const EdgeInsets.only(left: 20),
             alignment: Alignment.centerLeft,
             height: 80,
             decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 204, 231, 255),
-                borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              color: Color.fromARGB(255, 204, 231, 255),
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
             child: Row(
               children: [
                 const Icon(
@@ -271,42 +283,47 @@ class _MyHomePageState extends State<MyHomePage> {
                 TextButton(
                   onPressed: () {},
                   child: const Text('Settings',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black,
-                      )),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                    )
+                  ),
                 )
               ],
-            )),
+            )
+          ),
         Container(
-            margin: const EdgeInsets.all(10),
-            padding: const EdgeInsets.only(left: 20),
-            alignment: Alignment.centerLeft,
-            height: 80,
-            decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 204, 231, 255),
-                borderRadius: BorderRadius.all(Radius.circular(10.0))),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.help,
-                  size: 30,
+          margin: const EdgeInsets.all(10),
+          padding: const EdgeInsets.only(left: 20),
+          alignment: Alignment.centerLeft,
+          height: 80,
+          decoration: const BoxDecoration(
+              color: Color.fromARGB(255, 204, 231, 255),
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.help,
+                size: 30,
+              ),
+              const Padding(
+                padding: EdgeInsets.only(right: 10),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: const Text('About',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  )
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(right: 10),
-                ),
-                TextButton(
-                  onPressed: () {},
-                  child: const Text('About',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black,
-                      )),
-                )
-              ],
-            )),
+              )
+            ],
+          )
+        ),
       ],
     ),
+    // End of Halaman Profile
   ];
 
   void _onItemTapped(int index) {
@@ -363,6 +380,35 @@ class _MyHomePageState extends State<MyHomePage> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class EditProfilePage extends StatefulWidget {
+  const EditProfilePage({Key? key}) : super(key: key);
+  @override
+  State<EditProfilePage> createState() => _EditProfilePage();
+}
+
+class _EditProfilePage extends State<EditProfilePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Center(
+          child: Text('Edit Profile'),
+        )
+      ),
+      body: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(10),
+            child: Text(
+              'Test 123',
+            ),
+          ),
+        ],
+      )
     );
   }
 }
