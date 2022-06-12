@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:yukhiking_app/api/api.dart';
+import 'package:yukhiking_app/model/model.dart';
+import 'package:yukhiking_app/user.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -67,7 +70,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
-
   final List<Widget> _widgetOptions = <Widget>[
     Container(
       child: ListView(
@@ -219,12 +221,40 @@ class _MyHomePageState extends State<MyHomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 // ignore: prefer_const_literals_to_create_immutables
                 children: [
-                  const Text(
-                    'Username123',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  // const Text(
+                  //   'Username123',
+                  //   style: TextStyle(
+                  //     fontSize: 16,
+                  //     fontWeight: FontWeight.bold,
+                  //   ),
+                  // ),
+                  FutureBuilder(
+                    future: getUserData(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return const Center(
+                          child: Text("Error when fetching data"),
+                        );
+                      }
+                      if (snapshot.hasData) {
+                        List<UserData> data = snapshot.data as List<UserData>;
+                        if (data.isEmpty) {
+                          return const Center(
+                            child: Text("Data is empty"),
+                          );
+                        }
+                        return Text(
+                          '${data[1].username}',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      }
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
                   ),
                   const Text('User'),
                 ],
@@ -380,35 +410,6 @@ class _MyHomePageState extends State<MyHomePage> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
-}
-
-class EditProfilePage extends StatefulWidget {
-  const EditProfilePage({Key? key}) : super(key: key);
-  @override
-  State<EditProfilePage> createState() => _EditProfilePage();
-}
-
-class _EditProfilePage extends State<EditProfilePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Center(
-          child: Text('Edit Profile'),
-        )
-      ),
-      body: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.all(10),
-            child: Text(
-              'Test 123',
-            ),
-          ),
-        ],
-      )
     );
   }
 }
