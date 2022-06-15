@@ -3,20 +3,20 @@ import 'package:yukhiking_app/main.dart';
 import 'package:yukhiking_app/model/profileModel.dart';
 import 'package:yukhiking_app/api/profileAPI.dart';
 
-class EditProfilePage extends StatefulWidget {
-  const EditProfilePage({Key? key}) : super(key: key);
+class InfoProfilePage extends StatefulWidget {
+  const InfoProfilePage({Key? key}) : super(key: key);
   @override
-  State<EditProfilePage> createState() => _EditProfileState();
+  State<InfoProfilePage> createState() => _InfoProfileState();
 }
 
-class _EditProfileState extends State<EditProfilePage> {
+class _InfoProfileState extends State<InfoProfilePage> {
   Future userList = getUserData();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Center(
-          child: Text('Edit Profile'),
+          child: Text('Profile Info'),
         )
       ),
       body: Padding(
@@ -31,17 +31,26 @@ class _EditProfileState extends State<EditProfilePage> {
             }
             if (snapshot.hasData) {
               List<UserData> data = snapshot.data as List<UserData>;
-              if (data.isEmpty || data[0].username == 'defaultUserName') {
+              if (data.isEmpty 
+              // || data[0].username == 'defaultUserName'
+              ) {
                 return const Center(
                   child: Text("Data is empty"),
                 );
               }
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("ID: ${data[1].ID_user}"),
-                  Text("Username: ${data[1].username}"),
+                  Text("ID: ${data[0].ID_user}"),
+                  Text("Username: ${data[0].username}"),
+                  ElevatedButton(
+                    onPressed: () {
+                      navigatorKey.currentState?.pushNamed("/profile/info/edit");
+                    },
+                    child: const Text('Edit username')
+                  ),
                   // Text("Password: ${data[1].password}"),
-                  Text("Alamat: ${data[1].alamat}"),
+                  Text("Alamat: ${data[0].alamat}"),
                 ],
               );
             }
@@ -51,6 +60,47 @@ class _EditProfileState extends State<EditProfilePage> {
           }
         )
       )
+    );
+  }
+}
+
+class EditProfilePage extends StatefulWidget {
+  const EditProfilePage({Key? key}) : super(key: key);
+  @override
+  State<EditProfilePage> createState() => _EditProfileState();
+}
+
+class _EditProfileState extends State<EditProfilePage> {
+  final TextEditingController _controller = TextEditingController();
+  Future userList = getUserData();
+  
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Center(
+          child: Text('Edit Profile'),
+        )
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            TextFormField(
+              controller: _controller,
+              decoration: const InputDecoration(hintText: 'Enter new username'),
+              ),
+            // TextField(
+            //   controller: _controller,
+            //   decoration: const InputDecoration(hintText: 'Enter new username'),
+            // ),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('Change username'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

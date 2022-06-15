@@ -43,7 +43,8 @@ class yukHikingApp extends StatelessWidget {
       theme: ThemeData(primarySwatch: createMaterialColor(Color(0xFFA5D5FF))),
       home: const MyHomePage(title: 'yukHiking!'),
       routes: {
-        "/profile/edit": (context) => const EditProfilePage(),
+        "/profile/info": (context) => const InfoProfilePage(),
+        "/profile/info/edit": (context) => const EditProfilePage(),
         "/profile/about": (context) => const AboutProfilePage(),
       },
       navigatorKey: navigatorKey,
@@ -245,7 +246,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           );
                         }
                         return Text(
-                          '${data[1].username}',
+                          '${data[0].username}',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -274,13 +275,13 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Expanded(
             child: TextButton(
               onPressed: () {
-                navigatorKey.currentState?.pushNamed("/profile/edit");
+                navigatorKey.currentState?.pushNamed("/profile/info");
               },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Icon(
-                    Icons.edit,
+                    Icons.account_circle,
                     size: 30,
                     color: Colors.black,
                   ),
@@ -289,9 +290,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   TextButton(
                     onPressed: () {
-                      navigatorKey.currentState?.pushNamed("/profile/edit");
+                      navigatorKey.currentState?.pushNamed("/profile/info");
                     },
-                    child: const Text('Edit Profile',
+                    child: const Text('Profile Info',
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.black,
