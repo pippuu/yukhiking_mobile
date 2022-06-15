@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:yukhiking_app/main.dart';
-import 'package:yukhiking_app/model/model.dart';
-import 'package:yukhiking_app/api/api.dart';
+import 'package:yukhiking_app/model/profileModel.dart';
+import 'package:yukhiking_app/api/profileAPI.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({Key? key}) : super(key: key);
@@ -31,7 +31,7 @@ class _EditProfileState extends State<EditProfilePage> {
             }
             if (snapshot.hasData) {
               List<UserData> data = snapshot.data as List<UserData>;
-              if (data.isEmpty) {
+              if (data.isEmpty || data[0].username == 'defaultUserName') {
                 return const Center(
                   child: Text("Data is empty"),
                 );
@@ -51,6 +51,43 @@ class _EditProfileState extends State<EditProfilePage> {
           }
         )
       )
+    );
+  }
+}
+
+class AboutProfilePage extends StatelessWidget {
+  const AboutProfilePage({Key? key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Center(
+          child: Text('About Application'),
+        )
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            Container(
+              child: Image(image: AssetImage('assets/images/logo.png')),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 5),
+              child: Text(
+                'yukHiking! merupakan aplikasi layanan sewa-menyewa barang-barang untuk wisata gunung.',
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Text(
+                'Aplikasi ini dibuat untuk memudahkan para petualang mencari dan menyewa berbagai alat hiking dengan harga yang terjangkau.',
+              ),
+            ),
+          ],
+        ),
+        
+      ),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:yukhiking_app/api/api.dart';
-import 'package:yukhiking_app/model/model.dart';
-import 'package:yukhiking_app/user.dart';
+import 'package:yukhiking_app/api/profileAPI.dart';
+import 'package:yukhiking_app/model/profileModel.dart';
+import 'package:yukhiking_app/profile.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -44,6 +44,7 @@ class yukHikingApp extends StatelessWidget {
       home: const MyHomePage(title: 'yukHiking!'),
       routes: {
         "/profile/edit": (context) => const EditProfilePage(),
+        "/profile/about": (context) => const AboutProfilePage(),
       },
       navigatorKey: navigatorKey,
     );
@@ -238,9 +239,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       }
                       if (snapshot.hasData) {
                         List<UserData> data = snapshot.data as List<UserData>;
-                        if (data.isEmpty) {
+                        if (data.isEmpty || data[0].username == 'defaultUserName') {
                           return const Center(
-                            child: Text("Data is empty"),
+                            child: Text("defultUserName"),
                           );
                         }
                         return Text(
@@ -263,92 +264,123 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         Container(
-            margin: const EdgeInsets.all(10),
-            padding: const EdgeInsets.only(left: 20),
-            alignment: Alignment.centerLeft,
-            height: 80,
-            decoration: const BoxDecoration(
-              color: Color.fromARGB(255, 204, 231, 255),
-              borderRadius: BorderRadius.all(Radius.circular(10.0))),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.edit,
-                  size: 30,
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(right: 10),
-                ),
-                TextButton(
-                  onPressed: () {
-                    navigatorKey.currentState?.pushNamed("/profile/edit");
-                  },
-                  child: const Text('Edit Profile',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                    )
+          margin: const EdgeInsets.all(10),
+          padding: const EdgeInsets.only(left: 20),
+          alignment: Alignment.centerLeft,
+          height: 80,
+          decoration: const BoxDecoration(
+            color: Color.fromARGB(255, 204, 231, 255),
+            borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          child: Expanded(
+            child: TextButton(
+              onPressed: () {
+                navigatorKey.currentState?.pushNamed("/profile/edit");
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Icon(
+                    Icons.edit,
+                    size: 30,
+                    color: Colors.black,
                   ),
-                )
-              ],
-            )
-          ),
-        Container(
-            margin: const EdgeInsets.all(10),
-            padding: const EdgeInsets.only(left: 20),
-            alignment: Alignment.centerLeft,
-            height: 80,
-            decoration: const BoxDecoration(
-              color: Color.fromARGB(255, 204, 231, 255),
-              borderRadius: BorderRadius.all(Radius.circular(10.0))),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.settings,
-                  size: 30,
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(right: 10),
-                ),
-                TextButton(
-                  onPressed: () {},
-                  child: const Text('Settings',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                    )
+                  const Padding(
+                    padding: EdgeInsets.only(right: 10),
                   ),
-                )
-              ],
-            )
-          ),
+                  TextButton(
+                    onPressed: () {
+                      navigatorKey.currentState?.pushNamed("/profile/edit");
+                    },
+                    child: const Text('Edit Profile',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                      )
+                    ),
+                  )
+                ],
+              )
+            ),
+          )
+        ),
+        // Container(
+        //   margin: const EdgeInsets.all(10),
+        //   padding: const EdgeInsets.only(left: 20),
+        //   alignment: Alignment.centerLeft,
+        //   height: 80,
+        //   decoration: const BoxDecoration(
+        //     color: Color.fromARGB(255, 204, 231, 255),
+        //     borderRadius: BorderRadius.all(Radius.circular(10.0))),
+        //   child: Expanded(
+        //     child: TextButton(
+        //       onPressed: () {
+        //         navigatorKey.currentState?.pushNamed("/profile/about");
+        //       },
+        //       child: Row(
+        //         crossAxisAlignment: CrossAxisAlignment.stretch,
+        //         children: [
+        //           const Icon(
+        //             Icons.settings,
+        //             size: 30,
+        //             color: Colors.black,
+        //           ),
+        //           const Padding(
+        //             padding: EdgeInsets.only(right: 10),
+        //           ),
+        //           TextButton(
+        //             onPressed: () {
+        //               navigatorKey.currentState?.pushNamed("/profile/about");
+        //             },
+        //             child: const Text('About',
+        //               style: TextStyle(
+        //                 fontSize: 16,
+        //                 color: Colors.black,
+        //               )
+        //             ),
+        //           )
+        //         ],
+        //       )
+        //     ),
+        //   )
+        // ),
         Container(
           margin: const EdgeInsets.all(10),
           padding: const EdgeInsets.only(left: 20),
           alignment: Alignment.centerLeft,
           height: 80,
           decoration: const BoxDecoration(
-              color: Color.fromARGB(255, 204, 231, 255),
-              borderRadius: BorderRadius.all(Radius.circular(10.0))),
-          child: Row(
-            children: [
-              const Icon(
-                Icons.help,
-                size: 30,
-              ),
-              const Padding(
-                padding: EdgeInsets.only(right: 10),
-              ),
-              TextButton(
-                onPressed: () {},
-                child: const Text('About',
-                  style: TextStyle(
-                    fontSize: 16,
+            color: Color.fromARGB(255, 204, 231, 255),
+            borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          child: Expanded(
+            child: TextButton(
+              onPressed: () {
+                navigatorKey.currentState?.pushNamed("/profile/about");
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Icon(
+                    Icons.help,
+                    size: 30,
                     color: Colors.black,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(right: 10),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      navigatorKey.currentState?.pushNamed("/profile/about");
+                    },
+                    child: const Text('About',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                      )
+                    ),
                   )
-                ),
+                ],
               )
-            ],
+            ),
           )
         ),
       ],
