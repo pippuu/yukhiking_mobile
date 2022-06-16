@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yukhiking_app/api/profileAPI.dart';
+import 'package:yukhiking_app/login.dart';
 import 'package:yukhiking_app/model/profileModel.dart';
 import 'package:yukhiking_app/profile.dart';
 import 'package:yukhiking_app/explorasi.dart';
@@ -44,8 +45,9 @@ class yukHikingApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'yukHiking! Mobile Application',
       theme: ThemeData(primarySwatch: createMaterialColor(Color(0xFFA5D5FF))),
-      home: const MyHomePage(title: 'yukHiking!'),
+      home: const LoginPage(),
       routes: {
+        "/home": (context) => const MyHomePage(title: 'yukHiking!'),
         "/profile/info": (context) => const InfoProfilePage(),
         "/profile/info/edit": (context) => const EditProfilePage(),
         "/profile/about": (context) => const AboutProfilePage(),
@@ -447,27 +449,30 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Expanded(
               child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: transaksi.length,
-              itemBuilder: (context, index) {
-                // final trans = transaksi[index];
-                return Card(
-                  child: ListTile(
-                    title: Text('Nama Agent: ${transaksi[index].namaAgent}'),
-                    subtitle: Text('Status barang: ${transaksi[index].status}'),
-                    trailing: const Icon(Icons.arrow_forward),
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => TransaksiDetail(transaksi[index])));
-                    },
-                  ),
-                );
-              }),
-          ),
-        ],
+                  shrinkWrap: true,
+                  itemCount: transaksi.length,
+                  itemBuilder: (context, index) {
+                    // final trans = transaksi[index];
+                    return Card(
+                      child: ListTile(
+                        title:
+                            Text('Nama Agent: ${transaksi[index].namaAgent}'),
+                        subtitle:
+                            Text('Status barang: ${transaksi[index].status}'),
+                        trailing: const Icon(Icons.arrow_forward),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  TransaksiDetail(transaksi[index])));
+                        },
+                      ),
+                    );
+                  }),
+            ),
+          ],
+        ),
       ),
-    ),
-       // Halaman Profile
+      // Halaman Profile
       Column(
         children: [
           Container(
