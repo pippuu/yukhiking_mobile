@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:yukhiking_app/api/profileAPI.dart';
 import 'package:yukhiking_app/model/profileModel.dart';
 import 'package:yukhiking_app/profile.dart';
-import 'detail.dart';
-import 'model/DetailBarang.dart';
+import 'package:yukhiking_app/explorasi.dart';
+import 'package:yukhiking_app/model/ExplorasiModel.dart';
+import 'package:yukhiking_app/TransaksiDetail.dart';
+import 'package:yukhiking_app/model/TransaksiModel.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -443,55 +445,29 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            ListView(
+            Expanded(
+              child: ListView.builder(
               shrinkWrap: true,
-              children: [
-                Card(
-                  margin: const EdgeInsets.symmetric(
-                      horizontal: 15.0, vertical: 10.0),
-                  color: Color.fromARGB(255, 204, 231, 255),
-                  child: Container(
-                    height: 100.0,
+              itemCount: transaksi.length,
+              itemBuilder: (context, index) {
+                // final trans = transaksi[index];
+                return Card(
+                  child: ListTile(
+                    title: Text('Nama Agent: ${transaksi[index].namaAgent}'),
+                    subtitle: Text('Status barang: ${transaksi[index].status}'),
+                    trailing: const Icon(Icons.arrow_forward),
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => TransaksiDetail(transaksi[index])));
+                    },
                   ),
-                ),
-                Card(
-                  margin: const EdgeInsets.symmetric(
-                      horizontal: 15.0, vertical: 10.0),
-                  color: Color.fromARGB(255, 204, 231, 255),
-                  child: Container(
-                    height: 100.0,
-                  ),
-                ),
-                Card(
-                  margin: const EdgeInsets.symmetric(
-                      horizontal: 15.0, vertical: 10.0),
-                  color: Color.fromARGB(255, 204, 231, 255),
-                  child: Container(
-                    height: 100.0,
-                  ),
-                ),
-                Card(
-                  margin: const EdgeInsets.symmetric(
-                      horizontal: 15.0, vertical: 10.0),
-                  color: Color.fromARGB(255, 204, 231, 255),
-                  child: Container(
-                    height: 100.0,
-                  ),
-                ),
-                Card(
-                  margin: const EdgeInsets.symmetric(
-                      horizontal: 15.0, vertical: 10.0),
-                  color: Color.fromARGB(255, 204, 231, 255),
-                  child: Container(
-                    height: 100.0,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+                );
+              }),
+          ),
+        ],
       ),
-      // Halaman Profile
+    ),
+       // Halaman Profile
       Column(
         children: [
           Container(

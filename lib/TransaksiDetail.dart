@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
+import 'model/TransaksiModel.dart';
 
-import 'model/DetailBarang.dart';
-
-class detail extends StatelessWidget {
-  final DetailBarang detailbarang;
-  const detail(this.detailbarang);
+class TransaksiDetail extends StatelessWidget {
+  final Transaksi transaksi;
+  const TransaksiDetail(this.transaksi);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[400],
-      appBar: AppBar(title: Text("Detail Barang")),
+      appBar: AppBar(title: Text("Detail Transaksi")),
       body: SingleChildScrollView(
         child: Center(
           child: Container(
             margin: EdgeInsets.only(top: 100),
             padding: EdgeInsets.all(10.0),
-            height: 600,
+            height: 200,
             width: 600,
             color: Colors.grey[200],
             child: Column(
@@ -24,7 +23,7 @@ class detail extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    'Gambar : ${detailbarang.gambar}',
+                    'Nama Agent : ${transaksi.namaAgent}',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 22, fontStyle: FontStyle.italic),
                   ),
@@ -33,17 +32,17 @@ class detail extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Column(children: [
                       Text(
-                        'Nama Barang : ${detailbarang.nama_barang}',
+                        'Tanggal Diambil : ${transaksi.tanggal_Diambil}',
                         textAlign: TextAlign.justify,
                         style: TextStyle(fontSize: 17),
                       ),
                       Text(
-                        'Nama Toko : ${detailbarang.nama_toko}',
+                        'Tanggal Kembali : ${transaksi.tanggal_Kembali}',
                         textAlign: TextAlign.justify,
                         style: TextStyle(fontSize: 17),
                       ),
                       Text(
-                        'Deskripsi : ${detailbarang.deskripsi}',
+                        'Status Barang : ${transaksi.status}',
                         textAlign: TextAlign.justify,
                         style: TextStyle(fontSize: 17),
                       ),
@@ -56,3 +55,5 @@ class detail extends StatelessWidget {
     );
   }
 }
+//                
+//                
