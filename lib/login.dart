@@ -59,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         SizedBox(height: 70.0),
                         ElevatedButton(
-                          child: Text('Submit button'),
+                          child: Text('Login'),
                           style: ButtonStyle(
                             elevation: MaterialStateProperty.all(0),
                             fixedSize:
