@@ -11,6 +11,7 @@ class InfoProfilePage extends StatefulWidget {
 
 class _InfoProfileState extends State<InfoProfilePage> {
   Future userList = getUserData();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,10 +112,9 @@ class AboutProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Center(
-          child: Text('About Application'),
-        )
-      ),
+          title: const Center(
+        child: Text('About Application'),
+      )),
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
@@ -136,7 +136,6 @@ class AboutProfilePage extends StatelessWidget {
             ),
           ],
         ),
-        
       ),
     );
   }
