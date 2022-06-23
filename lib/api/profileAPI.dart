@@ -52,3 +52,18 @@ Future<List<UserData>> getUserData() async {
   }
   return finalList;
 }
+
+Future sendUserData(String username, String alamat) async {
+  final response = await http.post(
+    Uri.parse('http://localhost:8000/api/users/update'),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Accept': 'application/json'
+    },
+    body: jsonEncode(<String, String>{
+      'ID_user': '1',
+      'username': username,
+      'alamat': alamat,
+    }),
+  );
+}
