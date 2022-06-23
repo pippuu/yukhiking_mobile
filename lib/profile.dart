@@ -45,13 +45,13 @@ class ProfilePage extends StatelessWidget {
                         if (snapshot.hasData) {
                           List<UserData> data = snapshot.data as List<UserData>;
                           if (data.isEmpty ||
-                              data[0].username == 'defaultUserName') {
+                              data[1].username == 'defaultUserName') {
                             return const Center(
                               child: Text("defultUserName"),
                             );
                           }
                           return Text(
-                            '${data[0].username}',
+                            '${data[1].username}',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -230,14 +230,13 @@ class _InfoProfileState extends State<InfoProfilePage> {
                 children: [
                   Text("ID: ${data[0].ID_user}"),
                   Text("Username: ${data[0].username}"),
+                  Text("Alamat: ${data[0].alamat}"),
                   ElevatedButton(
                     onPressed: () {
                       navigatorKey.currentState?.pushNamed("/profile/info/edit");
                     },
                     child: const Text('Edit username')
                   ),
-                  // Text("Password: ${data[1].password}"),
-                  Text("Alamat: ${data[0].alamat}"),
                 ],
               );
             }
@@ -258,7 +257,8 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfilePage> {
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController _controllerUsername = TextEditingController();
+  final TextEditingController _controllerAlamat = TextEditingController();
   Future userList = getUserData();
   
   @override
@@ -274,16 +274,24 @@ class _EditProfileState extends State<EditProfilePage> {
         child: Column(
           children: [
             TextFormField(
-              controller: _controller,
+              controller: _controllerUsername,
               decoration: const InputDecoration(hintText: 'Enter new username'),
-              ),
+            ),
+            TextFormField(
+              controller: _controllerAlamat,
+              decoration: const InputDecoration(hintText: 'Enter new alamat'),
+            ),
             // TextField(
             //   controller: _controller,
             //   decoration: const InputDecoration(hintText: 'Enter new username'),
             // ),
             ElevatedButton(
-              onPressed: () {},
-              child: const Text('Change username'),
+              onPressed: () {
+                sendUserData(_controllerUsername.text, _controllerAlamat.text);
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+              child: const Text('Change Data'),
             ),
           ],
         ),

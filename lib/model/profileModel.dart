@@ -21,3 +21,13 @@ class UserData {
       required this.password,
       required this.alamat});
 }
+
+class UserDataToSend {
+  final int id;
+  final String username, alamat;
+  UserDataToSend(
+    this.id,
+    this.username,
+    this.alamat
+  );
+}
