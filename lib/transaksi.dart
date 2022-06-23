@@ -1,6 +1,52 @@
 import 'package:flutter/material.dart';
 import 'model/TransaksiModel.dart';
 
+class TransaksiPage extends StatelessWidget {
+  @override
+  Widget build(context) {
+    return Container(
+      child: ListView(
+        children: [
+          Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
+            alignment: Alignment.topLeft,
+            child: Text(
+              'Riwayat Transaksi',
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 25.0,
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: transaksi.length,
+                itemBuilder: (context, index) {
+                  // final trans = transaksi[index];
+                  return Card(
+                    child: ListTile(
+                      title: Text('Nama Agent: ${transaksi[index].namaAgent}'),
+                      subtitle:
+                          Text('Status barang: ${transaksi[index].status}'),
+                      trailing: const Icon(Icons.arrow_forward),
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>
+                                TransaksiDetail(transaksi[index])));
+                      },
+                    ),
+                  );
+                }),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class TransaksiDetail extends StatelessWidget {
   final Transaksi transaksi;
   const TransaksiDetail(this.transaksi);

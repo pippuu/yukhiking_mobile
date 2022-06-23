@@ -1,3 +1,4 @@
+import 'package:dbcrypt/dbcrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:yukhiking_app/api/loginAPI.dart';
 import 'package:yukhiking_app/model/profileModel.dart';
@@ -23,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
           padding: EdgeInsets.all(20.0),
           child: FutureBuilder(
               future: futureUser,
-              builder: (context, snapshot) {
+              builder: (BuildContext context, snapshot) {
                 if (snapshot.hasData) {
                   List<UserData> userList = snapshot.data as List<UserData>;
                   return Container(
@@ -49,33 +50,87 @@ class _LoginPageState extends State<LoginPage> {
                             labelText: 'Username',
                           ),
                         ),
-                        SizedBox(height: 20.0),
                         TextFormField(
+                          obscureText: true,
                           controller: passIn,
                           decoration: const InputDecoration(
                             border: UnderlineInputBorder(),
                             labelText: 'Password',
                           ),
                         ),
-                        SizedBox(height: 70.0),
+                        SizedBox(height: 40.0),
                         ElevatedButton(
-                          child: Text('Submit button'),
+                          child: Text('Login'),
                           style: ButtonStyle(
                             elevation: MaterialStateProperty.all(0),
                             fixedSize:
                                 MaterialStateProperty.all(const Size(150, 40)),
                           ),
                           onPressed: () {
-                            // for(var user in userList ) {
-                            //   if((user.username == usernameIn.text) && (user.)) break;
-                            // }
-                            for (var user in userList) {
-                              if (usernameIn.text == "admin" &&
-                                  passIn.text == "admin") {
-                                print(userList[0].username);
-                                Navigator.pushNamed(context, '/home');
+                            if (usernameIn.text != "" && passIn.text != "") {
+                              var checker = false;
+                              for (var user in userList) {
+                                if (usernameIn.text == user.username) {
+                                  if (new DBCrypt()
+                                      .checkpw(passIn.text, user.password)) {
+                                    checker = true;
+                                  }
+                                }
                               }
+                              if (checker == true) {
+                                Navigator.pushNamed(context, '/');
+                              } else {
+                                showDialog<String>(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                    title: const Text('Warning!'),
+                                    content: const Text(
+                                        "Username or password doesn't match, please try again"),
+                                    actions: <Widget>[
+                                      Center(
+                                        child: TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: const Text('OK'),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            } else {
+                              showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                  title: const Text('Warning!'),
+                                  content: const Text(
+                                      "Username and Password can't be empty. Please try again."),
+                                  actions: <Widget>[
+                                    Center(
+                                      child: TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text('OK'),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
                             }
+                          },
+                        ),
+                        SizedBox(height: 20.0),
+                        Text('or'),
+                        SizedBox(height: 20.0),
+                        ElevatedButton(
+                          child: Text('Register'),
+                          style: ButtonStyle(
+                            elevation: MaterialStateProperty.all(0),
+                            fixedSize:
+                                MaterialStateProperty.all(const Size(150, 40)),
+                          ),
+                          onPressed: () {
+                            Navigator.pushNamed(context, 'register');
                           },
                         ),
                       ],

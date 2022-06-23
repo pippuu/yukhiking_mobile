@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:yukhiking_app/model/profileModel.dart';
@@ -5,9 +6,7 @@ import 'package:yukhiking_app/model/profileModel.dart';
 Future<List<UserData>> fetchUser() async {
   final response = await http.get(Uri.parse('http://localhost:8000/api/users'));
 
-  if (response.statusCode != 200) {
-    throw "Gagal dalam fetching data";
-  } else {
+  if (response.statusCode == 200) {
     List body = jsonDecode(response.body);
     List<UserData> userList = [];
     for (var user in body) {
@@ -15,8 +14,11 @@ Future<List<UserData>> fetchUser() async {
         ID_user: user['ID_user'],
         username: user['username'],
         alamat: user['alamat'],
+        password: user['password'],
       ));
     }
     return userList;
+  } else {
+    throw Exception("Data can't be reached.");
   }
 }
