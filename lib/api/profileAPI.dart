@@ -21,10 +21,11 @@ Future<List<ToDoItems>> getTodos() async {
   return finalList;
 }
 
-Future<List<UserData>> getUserData() async {
+Future<List<UserData>> getUserData(int id) async {
   var response;
   try {
-    response = await http.get(Uri.parse("http://localhost:8000/api/users"));
+    response =
+        await http.get(Uri.parse("http://localhost:8000/api/users/${id}"));
   } catch (e) {
     List<UserData> exceptionList = [];
     exceptionList.add(UserData(
@@ -53,7 +54,7 @@ Future<List<UserData>> getUserData() async {
   return finalList;
 }
 
-Future sendUserData(String username, String alamat) async {
+Future sendUserData(String id, String username, String alamat) async {
   final response = await http.post(
     Uri.parse('http://localhost:8000/api/users/update'),
     headers: <String, String>{
@@ -61,7 +62,7 @@ Future sendUserData(String username, String alamat) async {
       'Accept': 'application/json'
     },
     body: jsonEncode(<String, String>{
-      'ID_user': '1',
+      'ID_user': id,
       'username': username,
       'alamat': alamat,
     }),

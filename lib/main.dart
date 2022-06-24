@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:yukhiking_app/api/profileAPI.dart';
 import 'package:yukhiking_app/login.dart';
+import 'package:yukhiking_app/register.dart';
 import 'package:yukhiking_app/model/profileModel.dart';
 import 'package:yukhiking_app/profile.dart';
 import 'package:yukhiking_app/explorasi.dart';
@@ -45,23 +46,35 @@ class yukHikingApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'yukHiking! Mobile Application',
       theme: ThemeData(primarySwatch: createMaterialColor(Color(0xFFA5D5FF))),
-      home: const MyHomePage(title: 'yukHiking!'),
       initialRoute: '/login',
+      // home: const MyHomePage(),
       routes: {
         "/login": (context) => const LoginPage(),
-        // "/register": (context) => const RegisterPage(),
-        "/profile": (context) => const ProfilePage(),
-        "/profile/info": (context) => const InfoProfilePage(),
+        "/home": (context) => MyHomePage(),
+        "/register": (context) => const RegisterPage(),
+        // "/profile": (context) => ProfilePage(),
+        "/profile/info": (context) => InfoProfilePage(),
         "/profile/info/edit": (context) => const EditProfilePage(),
         "/profile/about": (context) => const AboutProfilePage(),
       },
+      // onGenerateRoute: (settings) {
+      //   if (settings.name == ) {
+      //     final args = settings.arguments as ScreenArguments;
+
+      //     return MaterialPageRoute(builder: (context) {
+      //       return PassArgumentsScreen(id_user: args.id_user);
+      //     });
+      //   }
+      // },
       navigatorKey: navigatorKey,
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  // static const routeName = "/home";
+
+  const MyHomePage({Key? key}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -71,8 +84,6 @@ class MyHomePage extends StatefulWidget {
   // case the title) provided by the parent (in this case the App widget) and
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
-
-  final String title;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -222,12 +233,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments as ProfileArguments;
     final List<Widget> _widgetOptions = <Widget>[
       // ExplorasiPage(),
       ExplorasiPage(),
       TransaksiPage(),
       // Halaman Profile
-      ProfilePage(),
+      ProfilePage(
+          id_user: args.id_user,
+          username_user: args.username_user,
+          address_user: args.address_user),
     ];
 
     return Scaffold(
@@ -236,7 +251,7 @@ class _MyHomePageState extends State<MyHomePage> {
           image: AssetImage('assets/images/logo.png'),
         ),
         title: Text(
-          widget.title,
+          'yukHiking!',
           style: TextStyle(color: Colors.white),
         ),
         actions: <Widget>[
@@ -250,7 +265,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.popUntil(context, ModalRoute.withName('/login'));
             },
             child: Text('Logout', style: TextStyle(color: Colors.black)),
           ),

@@ -1,11 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:yukhiking_app/login.dart';
 import 'package:yukhiking_app/main.dart';
 import 'package:yukhiking_app/model/profileModel.dart';
 import 'package:yukhiking_app/api/profileAPI.dart';
 
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+class ProfilePage extends StatefulWidget {
+  final int id_user;
+  final String username_user;
+  final String address_user;
 
+  const ProfilePage(
+      {Key? key,
+      required this.id_user,
+      required this.username_user,
+      required this.address_user})
+      : super(key: key);
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(context) {
     return Column(
@@ -35,7 +50,7 @@ class ProfilePage extends StatelessWidget {
                   //   ),
                   // ),
                   FutureBuilder(
-                      future: getUserData(),
+                      future: getUserData(widget.id_user),
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
                           return const Center(
@@ -51,7 +66,7 @@ class ProfilePage extends StatelessWidget {
                             );
                           }
                           return Text(
-                            '${data[1].username}',
+                            '${data[0].username}',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -79,7 +94,9 @@ class ProfilePage extends StatelessWidget {
             child: Expanded(
               child: TextButton(
                   onPressed: () {
-                    navigatorKey.currentState?.pushNamed("/profile/info");
+                    navigatorKey.currentState?.pushNamed("/profile/info",
+                        arguments: ProfileArguments(widget.id_user,
+                            widget.username_user, widget.address_user));
                   },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -191,62 +208,61 @@ class ProfilePage extends StatelessWidget {
 
 class InfoProfilePage extends StatefulWidget {
   const InfoProfilePage({Key? key}) : super(key: key);
+
   @override
   State<InfoProfilePage> createState() => _InfoProfileState();
 }
 
 class _InfoProfileState extends State<InfoProfilePage> {
-  Future userList = getUserData();
-
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments as ProfileArguments;
+    Future userList = getUserData(args.id_user);
     return Scaffold(
-      appBar: AppBar(
-        title: const Center(
+        appBar: AppBar(
+            title: const Center(
           child: Text('Profile Info'),
-        )
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: FutureBuilder(
-          future: userList,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Center(
-                child: Text("Error when fetching data"),
-              );
-            }
-            if (snapshot.hasData) {
-              List<UserData> data = snapshot.data as List<UserData>;
-              if (data.isEmpty 
-              // || data[0].username == 'defaultUserName'
-              ) {
-                return const Center(
-                  child: Text("Data is empty"),
-                );
-              }
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("ID: ${data[0].ID_user}"),
-                  Text("Username: ${data[0].username}"),
-                  Text("Alamat: ${data[0].alamat}"),
-                  ElevatedButton(
-                    onPressed: () {
-                      navigatorKey.currentState?.pushNamed("/profile/info/edit");
-                    },
-                    child: const Text('Edit username')
-                  ),
-                ],
-              );
-            }
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        )
-      )
-    );
+        )),
+        body: Padding(
+            padding: const EdgeInsets.all(10),
+            child: FutureBuilder(
+                future: userList,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return const Center(
+                      child: Text("Error when fetching data"),
+                    );
+                  }
+                  if (snapshot.hasData) {
+                    List<UserData> data = snapshot.data as List<UserData>;
+                    if (data.isEmpty
+                        // || data[0].username == 'defaultUserName'
+                        ) {
+                      return const Center(
+                        child: Text("Data is empty"),
+                      );
+                    }
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("ID: ${data[0].ID_user}"),
+                        Text("Username: ${data[0].username}"),
+                        Text("Alamat: ${data[0].alamat}"),
+                        ElevatedButton(
+                            onPressed: () {
+                              navigatorKey.currentState?.pushNamed(
+                                  "/profile/info/edit",
+                                  arguments: ProfileArguments(args.id_user,
+                                      args.username_user, args.address_user));
+                            },
+                            child: const Text('Edit username')),
+                      ],
+                    );
+                  }
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                })));
   }
 }
 
@@ -259,16 +275,17 @@ class EditProfilePage extends StatefulWidget {
 class _EditProfileState extends State<EditProfilePage> {
   final TextEditingController _controllerUsername = TextEditingController();
   final TextEditingController _controllerAlamat = TextEditingController();
-  Future userList = getUserData();
-  
+
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments as ProfileArguments;
+    print(args.id_user);
+    Future userList = getUserData(args.id_user);
     return Scaffold(
       appBar: AppBar(
-        title: const Center(
-          child: Text('Edit Profile'),
-        )
-      ),
+          title: const Center(
+        child: Text('Edit Profile'),
+      )),
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
@@ -287,7 +304,8 @@ class _EditProfileState extends State<EditProfilePage> {
             // ),
             ElevatedButton(
               onPressed: () {
-                sendUserData(_controllerUsername.text, _controllerAlamat.text);
+                sendUserData(args.id_user.toString(), _controllerUsername.text,
+                    _controllerAlamat.text);
                 Navigator.pop(context);
                 Navigator.pop(context);
               },

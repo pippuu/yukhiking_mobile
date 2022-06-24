@@ -25,9 +25,12 @@ class UserData {
 class UserDataToSend {
   final int id;
   final String username, alamat;
-  UserDataToSend(
-    this.id,
-    this.username,
-    this.alamat
-  );
+  UserDataToSend(this.id, this.username, this.alamat);
+}
+
+class UserDataToCreate {
+  final String username, password, alamat;
+
+  UserDataToCreate(
+      {required this.username, required this.password, required this.alamat});
 }

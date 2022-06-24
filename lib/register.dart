@@ -1,24 +1,23 @@
-import 'package:dbcrypt/dbcrypt.dart';
 import 'package:flutter/material.dart';
-import 'package:yukhiking_app/api/loginAPI.dart';
+import 'package:yukhiking_app/api/registerAPI.dart';
 import 'package:yukhiking_app/model/profileModel.dart';
 import 'package:yukhiking_app/main.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   late Future<List<UserData>> futureUser = fetchUser();
   final usernameIn = TextEditingController();
   final passIn = TextEditingController();
+  final alamatIn = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    var id_user, username_user, address_user;
     return Scaffold(
       body: Center(
         child: Padding(
@@ -38,12 +37,26 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Container(
-                          child: const Image(
-                            image: AssetImage('assets/images/logo.png'),
-                            fit: BoxFit.fitWidth,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                icon: const Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.blue,
+                                  size: 26,
+                                )),
+                            SizedBox(width: 10),
+                            Text('Create an account',
+                                style: TextStyle(
+                                    color: Colors.blue, fontSize: 20)),
+                          ],
                         ),
+                        SizedBox(height: 40.0),
                         TextFormField(
                           controller: usernameIn,
                           decoration: const InputDecoration(
@@ -59,9 +72,16 @@ class _LoginPageState extends State<LoginPage> {
                             labelText: 'Password',
                           ),
                         ),
+                        TextFormField(
+                          controller: alamatIn,
+                          decoration: const InputDecoration(
+                            border: UnderlineInputBorder(),
+                            labelText: 'Address',
+                          ),
+                        ),
                         SizedBox(height: 40.0),
                         ElevatedButton(
-                          child: const Text('Login',
+                          child: const Text('Register',
                               style: TextStyle(
                                   color: Color.fromARGB(255, 43, 43, 43))),
                           style: ButtonStyle(
@@ -70,32 +90,24 @@ class _LoginPageState extends State<LoginPage> {
                                 MaterialStateProperty.all(const Size(150, 40)),
                           ),
                           onPressed: () {
-                            if (usernameIn.text != "" && passIn.text != "") {
+                            if (usernameIn.text != "" &&
+                                passIn.text != "" &&
+                                alamatIn.text != "") {
                               var checker = false;
                               for (var user in userList) {
                                 if (usernameIn.text == user.username) {
-                                  if (new DBCrypt()
-                                      .checkpw(passIn.text, user.password)) {
-                                    checker = true;
-                                    id_user = user.ID_user;
-                                    username_user = user.username;
-                                    address_user = user.alamat;
-                                    break;
-                                  }
+                                  checker = true;
+                                  break;
                                 }
                               }
                               if (checker == true) {
-                                Navigator.pushNamed(context, "/home",
-                                    arguments: ProfileArguments(
-                                        id_user, username_user, address_user));
-                              } else {
-                                showDialog<String>(
+                                showDialog(
                                   context: context,
                                   builder: (BuildContext context) =>
                                       AlertDialog(
                                     title: const Text('Warning!'),
                                     content: const Text(
-                                        "Username or password doesn't match, please try again"),
+                                        "Username already existed. Please try using another username."),
                                     actions: <Widget>[
                                       Center(
                                         child: TextButton(
@@ -107,6 +119,29 @@ class _LoginPageState extends State<LoginPage> {
                                     ],
                                   ),
                                 );
+                              } else {
+                                createUser(usernameIn.text, alamatIn.text,
+                                    passIn.text);
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                          title: const Text('Success!'),
+                                          content: Text(
+                                              'Success in creating an account!'),
+                                          actions: <Widget>[
+                                            Center(
+                                              child: TextButton(
+                                                onPressed: () => {
+                                                  Navigator
+                                                      .pushReplacementNamed(
+                                                          context, '/login')
+                                                },
+                                                child: const Text(
+                                                    'Return to login.'),
+                                              ),
+                                            ),
+                                          ],
+                                        ));
                               }
                             } else {
                               showDialog<String>(
@@ -114,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
                                 builder: (BuildContext context) => AlertDialog(
                                   title: const Text('Warning!'),
                                   content: const Text(
-                                      "Username and password can't be empty. Please try again."),
+                                      "Username, password, and address can't be empty. Please try again."),
                                   actions: <Widget>[
                                     Center(
                                       child: TextButton(
@@ -128,37 +163,9 @@ class _LoginPageState extends State<LoginPage> {
                             }
                           },
                         ),
-                        SizedBox(height: 20.0),
-                        Text('or'),
-                        SizedBox(height: 20.0),
-                        ElevatedButton(
-                          child: const Text('Register',
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 131, 199, 255))),
-                          style: ButtonStyle(
-                            overlayColor: MaterialStateProperty.all(
-                                Color.fromARGB(255, 237, 247, 255)),
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.transparent),
-                            side: MaterialStateProperty.all(
-                              const BorderSide(
-                                color: Color.fromARGB(255, 131, 199, 255),
-                                width: 1,
-                              ),
-                            ),
-                            elevation: MaterialStateProperty.all(0),
-                            fixedSize:
-                                MaterialStateProperty.all(const Size(150, 40)),
-                          ),
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/register');
-                          },
-                        ),
                       ],
                     ),
                   );
-                } else if (snapshot.hasError) {
-                  return Text('Sorry, error when fetching data, return later.');
                 }
 
                 return const CircularProgressIndicator();
@@ -167,12 +174,4 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-}
-
-class ProfileArguments {
-  final int id_user;
-  final String username_user;
-  final String address_user;
-
-  ProfileArguments(this.id_user, this.username_user, this.address_user);
 }
