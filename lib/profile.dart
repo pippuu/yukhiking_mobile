@@ -21,15 +21,18 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late Future futureUser = getUserData(widget.id_user);
-  var username_user;
+  late Future _futureUser = getUserData(widget.id_user);
 
   @override
-  Future updateValue() {
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void updateValue(id_user) {
     setState(() {
-      Future futureUser = getUserData(widget.id_user);
+      _futureUser = getUserData(id_user);
     });
-    return futureUser;
   }
 
   Widget build(context) {
@@ -60,7 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   //   ),
                   // ),
                   FutureBuilder(
-                      future: futureUser,
+                      future: _futureUser,
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
                           return const Center(
@@ -109,7 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             arguments: ProfileArguments(widget.id_user,
                                 widget.username_user, widget.address_user))
                         .then((value) {
-                      updateValue();
+                      updateValue(widget.id_user);
                     });
                   },
                   child: Row(
@@ -132,9 +135,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       widget.username_user,
                                       widget.address_user))
                               .then((value) {
-                            print('masok ga');
-                            print(value);
-                            updateValue();
+                            updateValue(widget.id_user);
                           });
                         },
                         child: const Text('Profile Info',
@@ -238,10 +239,18 @@ class InfoProfilePage extends StatefulWidget {
 }
 
 class _InfoProfileState extends State<InfoProfilePage> {
+  late final args =
+      ModalRoute.of(context)!.settings.arguments as ProfileArguments;
+  late Future _userData = getUserData(args.id_user);
+
+  void updateValue(id_user) {
+    setState(() {
+      _userData = getUserData(id_user);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as ProfileArguments;
-    Future userData = getUserData(args.id_user);
     return Scaffold(
         appBar: AppBar(
             title: const Center(
@@ -250,7 +259,7 @@ class _InfoProfileState extends State<InfoProfilePage> {
         body: Padding(
             padding: const EdgeInsets.all(10),
             child: FutureBuilder(
-                future: userData,
+                future: _userData,
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return const Center(
@@ -274,10 +283,15 @@ class _InfoProfileState extends State<InfoProfilePage> {
                         Text("Alamat: ${data.alamat}"),
                         ElevatedButton(
                             onPressed: () {
-                              navigatorKey.currentState?.pushNamed(
-                                  "/profile/info/edit",
-                                  arguments: ProfileArguments(args.id_user,
-                                      args.username_user, args.address_user));
+                              navigatorKey.currentState
+                                  ?.pushNamed("/profile/info/edit",
+                                      arguments: ProfileArguments(
+                                          args.id_user,
+                                          args.username_user,
+                                          args.address_user))
+                                  .then((value) {
+                                updateValue(args.id_user);
+                              });
                             },
                             child: const Text('Edit username')),
                       ],

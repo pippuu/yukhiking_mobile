@@ -225,6 +225,8 @@ class _MyHomePageState extends State<MyHomePage> {
   //   ),
   // Halaman Profile
   //  3
+  late final args =
+      ModalRoute.of(context)!.settings.arguments as ProfileArguments;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -234,7 +236,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as ProfileArguments;
     final List<Widget> _widgetOptions = <Widget>[
       // ExplorasiPage(),
       ExplorasiPage(),
