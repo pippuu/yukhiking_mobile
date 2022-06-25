@@ -70,7 +70,7 @@ Future getUserData(int id) async {
   return data;
 }
 
-Future sendUserData(String id, String username, String alamat) async {
+Future<bool> sendUserData(String id, String username, String alamat) async {
   final response = await http.post(
     Uri.parse('http://localhost:8000/api/users/update'),
     headers: <String, String>{
@@ -84,4 +84,9 @@ Future sendUserData(String id, String username, String alamat) async {
       'alamat': alamat,
     }),
   );
+  if (response.statusCode != 200) {
+    return false;
+  } else {
+    return true;
+  }
 }

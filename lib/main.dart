@@ -46,6 +46,7 @@ class yukHikingApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'yukHiking! Mobile Application',
       theme: ThemeData(primarySwatch: createMaterialColor(Color(0xFFA5D5FF))),
+      home: const MyHomePage(),
       initialRoute: '/login',
       // home: const MyHomePage(),
       routes: {
@@ -56,7 +57,6 @@ class yukHikingApp extends StatelessWidget {
         "/profile/info": (context) => InfoProfilePage(),
         "/profile/info/edit": (context) => const EditProfilePage(),
         "/profile/about": (context) => const AboutProfilePage(),
-        // "/profile/about": (context) => const AboutProfilePage(),
       },
       // onGenerateRoute: (settings) {
       //   if (settings.name == ) {

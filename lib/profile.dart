@@ -21,7 +21,17 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  late Future futureUser = getUserData(widget.id_user);
+  var username_user;
+
   @override
+  Future updateValue() {
+    setState(() {
+      Future futureUser = getUserData(widget.id_user);
+    });
+    return futureUser;
+  }
+
   Widget build(context) {
     return Column(
       children: [
@@ -50,7 +60,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   //   ),
                   // ),
                   FutureBuilder(
-                      future: getUserData(widget.id_user),
+                      future: futureUser,
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
                           return const Center(
@@ -94,9 +104,13 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Expanded(
               child: TextButton(
                   onPressed: () {
-                    navigatorKey.currentState?.pushNamed("/profile/info",
-                        arguments: ProfileArguments(widget.id_user,
-                            widget.username_user, widget.address_user));
+                    navigatorKey.currentState
+                        ?.pushNamed("/profile/info",
+                            arguments: ProfileArguments(widget.id_user,
+                                widget.username_user, widget.address_user))
+                        .then((value) {
+                      updateValue();
+                    });
                   },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -111,14 +125,22 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       TextButton(
                         onPressed: () {
-                          navigatorKey.currentState?.pushNamed("/profile/info",
-                              arguments: ProfileArguments(widget.id_user,
-                                  widget.username_user, widget.address_user));
+                          navigatorKey.currentState
+                              ?.pushNamed("/profile/info",
+                                  arguments: ProfileArguments(
+                                      widget.id_user,
+                                      widget.username_user,
+                                      widget.address_user))
+                              .then((value) {
+                            print('masok ga');
+                            print(value);
+                            updateValue();
+                          });
                         },
                         child: const Text('Profile Info',
                             style: TextStyle(
                               fontSize: 16,
-                              color: Colors.black,
+                              color: Color.fromARGB(255, 91, 90, 90),
                             )),
                       )
                     ],
@@ -305,44 +327,44 @@ class _EditProfileState extends State<EditProfilePage> {
             //   decoration: const InputDecoration(hintText: 'Enter new username'),
             // ),
             ElevatedButton(
-              onPressed: () {
-                sendUserData(args.id_user.toString(), _controllerUsername.text,
-                    _controllerAlamat.text);
-                //   if (editSuccess == true) {
-                //     showDialog<String>(
-                //       context: context,
-                //       builder: (BuildContext context) => AlertDialog(
-                //         title: const Text('Success'),
-                //         content: const Text("Success updating the account."),
-                //         actions: <Widget>[
-                //           Center(
-                //             child: TextButton(
-                //               onPressed: () => navigatorKey.currentState
-                //                   ?.pushNamed("/profile/info"),
-                //               child: const Text('OK'),
-                //             ),
-                //           ),
-                //         ],
-                //       ),
-                //     );
-                //   } else {
-                //     showDialog<String>(
-                //       context: context,
-                //       builder: (BuildContext context) => AlertDialog(
-                //         title: const Text('Failed'),
-                //         content: const Text(
-                //             "Failed to updating the account, try again later."),
-                //         actions: <Widget>[
-                //           Center(
-                //             child: TextButton(
-                //               onPressed: () => Navigator.pop(context),
-                //               child: const Text('OK'),
-                //             ),
-                //           ),
-                //         ],
-                //       ),
-                //     );
-                //   }
+              onPressed: () async {
+                bool check = await sendUserData(args.id_user.toString(),
+                    _controllerUsername.text, _controllerAlamat.text);
+
+                if (check == true) {
+                  showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('Success'),
+                      content: const Text("Success updating the account."),
+                      actions: <Widget>[
+                        Center(
+                          child: TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('OK'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                } else {
+                  showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('Failed'),
+                      content: const Text(
+                          "Failed to updating the account, try again later."),
+                      actions: <Widget>[
+                        Center(
+                          child: TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('OK'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
               },
               child: const Text('Change Data'),
             ),
