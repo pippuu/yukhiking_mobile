@@ -21,6 +21,7 @@ Future<List<ToDoItems>> getTodos() async {
   return finalList;
 }
 
+
 Future getUserData(int id) async {
   var response;
   try {
@@ -69,6 +70,7 @@ Future getUserData(int id) async {
 
   return data;
 }
+
 
 Future<bool> sendUserData(String id, String username, String alamat) async {
   final response = await http.post(

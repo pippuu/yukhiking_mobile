@@ -15,7 +15,6 @@ class ProfilePage extends StatefulWidget {
       required this.username_user,
       required this.address_user})
       : super(key: key);
-
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
@@ -31,7 +30,7 @@ class _ProfilePageState extends State<ProfilePage> {
     });
     return futureUser;
   }
-
+  
   Widget build(context) {
     return Column(
       children: [
@@ -394,7 +393,7 @@ class AboutProfilePage extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(top: 5),
               child: Text(
-                'yukHiking! merupakan aplikasi layanan sewa-menyewa barang-barang untuk wisata gunung.',
+                'yukHiking! merupakan aplikasi layanan sewa-menyewa barang-barang-barang untuk wisata gunung.',
               ),
             ),
             Padding(
