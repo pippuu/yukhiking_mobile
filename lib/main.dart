@@ -46,7 +46,6 @@ class yukHikingApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'yukHiking! Mobile Application',
       theme: ThemeData(primarySwatch: createMaterialColor(Color(0xFFA5D5FF))),
-      home: const MyHomePage(),
       initialRoute: '/login',
       // home: const MyHomePage(),
       routes: {
