@@ -1,7 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:yukhiking_app/api/itemAPI.dart';
+import 'package:yukhiking_app/api/transaksiAPI.dart';
+import 'package:yukhiking_app/model/profileModel.dart';
+import 'package:yukhiking_app/model/ExplorasiModel.dart';
 import 'model/TransaksiModel.dart';
 
-class TransaksiPage extends StatelessWidget {
+class TransaksiPage extends StatefulWidget {
+  final int id_user;
+  const TransaksiPage({Key? key, required this.id_user}) : super(key: key);
+  @override
+  State<TransaksiPage> createState() => _TransaksiPageState();
+}
+
+class _TransaksiPageState extends State<TransaksiPage> {
+  late Future<List<Transaksi>> transaksiList = getTransaksi(widget.id_user);
   @override
   Widget build(context) {
     return Container(
@@ -12,7 +24,7 @@ class TransaksiPage extends StatelessWidget {
                 const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
             alignment: Alignment.topLeft,
             child: Text(
-              'Riwayat Transaksi',
+              'Daftar Transaksi',
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
@@ -21,35 +33,64 @@ class TransaksiPage extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: transaksi.length,
-                itemBuilder: (context, index) {
-                  // final trans = transaksi[index];
-                  return Card(
-                    child: ListTile(
-                      title: Text('Nama Agent: ${transaksi[index].namaAgent}'),
-                      subtitle:
-                          Text('Status barang: ${transaksi[index].status}'),
-                      trailing: const Icon(Icons.arrow_forward),
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>
-                                TransaksiDetail(transaksi[index])));
-                      },
-                    ),
-                  );
-                }),
-          ),
+              child: FutureBuilder(
+                  future: transaksiList,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return const Center(
+                        child: Text("Error when fetching data"),
+                      );
+                    }
+                    if (snapshot.hasData) {
+                      List<Transaksi> data = snapshot.data as List<Transaksi>;
+                      if (data.isEmpty
+                          // || data[0].username == 'defaultUserName'
+                          ) {
+                        return const Center(
+                          child: Text("Data is empty"),
+                        );
+                      }
+                      return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: data.length,
+                          itemBuilder: (context, index) {
+                            // final trans = transaksi[index];
+                            return Card(
+                              child: ListTile(
+                                title: Text(
+                                    'ID Transaksi: ${data[index].ID_Transaksi}'),
+                                subtitle: Text('Status: Sedang Disewa'),
+                                trailing: const Icon(Icons.arrow_forward),
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          TransaksiDetail(data[index])));
+                                },
+                              ),
+                            );
+                          });
+                    }
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  })),
         ],
       ),
     );
   }
 }
 
-class TransaksiDetail extends StatelessWidget {
+class TransaksiDetail extends StatefulWidget {
   final Transaksi transaksi;
   const TransaksiDetail(this.transaksi);
+
+  @override
+  State<TransaksiDetail> createState() => _TransaksiDetailState();
+}
+
+class _TransaksiDetailState extends State<TransaksiDetail> {
+  Future<List<DetailBarang>> itemList = getItemData();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,32 +107,71 @@ class TransaksiDetail extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Nama Agent : ${transaksi.namaAgent}',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 22, fontStyle: FontStyle.italic),
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.all(8.0),
+                //   child: Text(
+                //     'Nama Agent : ${transaksi.ID_transaksi}',
+                //     textAlign: TextAlign.center,
+                //     style: TextStyle(fontSize: 22, fontStyle: FontStyle.italic),
+                //   ),
+                // ),
                 Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(children: [
                       Text(
-                        'Tanggal Diambil : ${transaksi.tanggal_Diambil}',
+                        'Tanggal Diambil : ${widget.transaksi.tanggal_Diambil.day}-${widget.transaksi.tanggal_Diambil.month}-${widget.transaksi.tanggal_Diambil.year}',
                         textAlign: TextAlign.justify,
                         style: TextStyle(fontSize: 17),
                       ),
                       Text(
-                        'Tanggal Kembali : ${transaksi.tanggal_Kembali}',
+                        'Tanggal Kembali : ${widget.transaksi.tanggal_Kembali.day}-${widget.transaksi.tanggal_Kembali.month}-${widget.transaksi.tanggal_Kembali.year}',
                         textAlign: TextAlign.justify,
                         style: TextStyle(fontSize: 17),
                       ),
-                      Text(
-                        'Status Barang : ${transaksi.status}',
-                        textAlign: TextAlign.justify,
-                        style: TextStyle(fontSize: 17),
-                      ),
+                      FutureBuilder(
+                          future: itemList,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return const Center(
+                                child: Text("Error when fetching data"),
+                              );
+                            }
+                            if (snapshot.hasData) {
+                              List<DetailBarang> data =
+                                  snapshot.data as List<DetailBarang>;
+                              if (data.isEmpty
+                                  // || data[0].username == 'defaultUserName'
+                                  ) {
+                                return const Center(
+                                  child: Text("Data is empty"),
+                                );
+                              }
+                              int idx = 0;
+                              int found = 0;
+                              for (var item in data) {
+                                if (item.transaksiID ==
+                                    widget.transaksi.ID_Transaksi) {
+                                  found = idx;
+                                }
+                                idx = idx + 1;
+                              }
+                              return Column(children: [
+                                Text(
+                                  'Barang : ${data[found].nama_barang}',
+                                  textAlign: TextAlign.justify,
+                                  style: TextStyle(fontSize: 17),
+                                ),
+                                Text(
+                                  'Jumlah sewa : ${data[found].stock}',
+                                  textAlign: TextAlign.justify,
+                                  style: TextStyle(fontSize: 17),
+                                ),
+                              ]);
+                            }
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }),
                     ])),
               ],
             ),
@@ -101,5 +181,3 @@ class TransaksiDetail extends StatelessWidget {
     );
   }
 }
-//                
-//                

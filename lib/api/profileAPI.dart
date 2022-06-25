@@ -21,45 +21,64 @@ Future<List<ToDoItems>> getTodos() async {
   return finalList;
 }
 
-Future<List<UserData>> getUserData(int id) async {
+
+Future getUserData(int id) async {
   var response;
   try {
     response =
         await http.get(Uri.parse("http://localhost:8000/api/users/${id}"));
   } catch (e) {
-    List<UserData> exceptionList = [];
-    exceptionList.add(UserData(
+    // List<UserData> exceptionList = [];
+    // exceptionList.add(UserData(
+    //   ID_user: 999,
+    //   username: 'defaultUserName',
+    //   alamat: 'default',
+    //   password: 'test',
+    // ));
+    // return exceptionList;
+    UserData exceptionData = UserData(
       ID_user: 999,
       username: 'defaultUserName',
       alamat: 'default',
       password: 'test',
-    ));
-    return exceptionList;
+    );
+    return exceptionData;
   }
 
   if (response.statusCode != 200) {
     throw "Gagal dalam fetching data";
   }
-  List body = jsonDecode(response.body);
-  List<UserData> finalList = [];
-  for (var user in body) {
-    finalList.add(UserData(
-      ID_user: user["ID_user"],
-      username: user["username"],
-      // password: user["password"],
-      alamat: user["alamat"],
-      password: user["password"],
-    ));
-  }
-  return finalList;
+
+  // List body = jsonDecode(response.body);
+  // List<UserData> finalList = [];
+  // for (var user in body) {
+  //   finalList.add(UserData(
+  //     ID_user: user["ID_user"],
+  //     username: user["username"],
+  //     // password: user["password"],
+  //     alamat: user["alamat"],
+  //     password: user["password"],
+  //   ));
+  // }
+  var body = jsonDecode(response.body);
+  final UserData data = UserData(
+    ID_user: body[0]['ID_user'],
+    username: body[0]['username'],
+    alamat: body[0]['alamat'],
+    password: body[0]['password'],
+  );
+
+  return data;
 }
 
-Future sendUserData(String id, String username, String alamat) async {
+
+Future<bool> sendUserData(String id, String username, String alamat) async {
   final response = await http.post(
     Uri.parse('http://localhost:8000/api/users/update'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
-      'Accept': 'application/json'
+      'Accept': 'application/json',
+      'Access-Control-Allow-Origin': '*',
     },
     body: jsonEncode(<String, String>{
       'ID_user': id,
@@ -67,4 +86,9 @@ Future sendUserData(String id, String username, String alamat) async {
       'alamat': alamat,
     }),
   );
+  if (response.statusCode != 200) {
+    return false;
+  } else {
+    return true;
+  }
 }
