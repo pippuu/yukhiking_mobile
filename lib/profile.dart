@@ -337,7 +337,7 @@ class AboutProfilePage extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(top: 5),
               child: Text(
-                'yukHiking! merupakan aplikasi layanan sewa-menyewa barang-barang untuk wisata gunung.',
+                'yukHiking! merupakan aplikasi layanan sewa-menyewa barang untuk wisata gunung.',
               ),
             ),
             Padding(
