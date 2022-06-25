@@ -56,6 +56,7 @@ class yukHikingApp extends StatelessWidget {
         "/profile/info": (context) => InfoProfilePage(),
         "/profile/info/edit": (context) => const EditProfilePage(),
         "/profile/about": (context) => const AboutProfilePage(),
+        // "/profile/about": (context) => const AboutProfilePage(),
       },
       // onGenerateRoute: (settings) {
       //   if (settings.name == ) {
