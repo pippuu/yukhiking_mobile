@@ -15,13 +15,25 @@ class ProfilePage extends StatefulWidget {
       required this.username_user,
       required this.address_user})
       : super(key: key);
-
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  late Future _futureUser = getUserData(widget.id_user);
+
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void updateValue(id_user) {
+    setState(() {
+      _futureUser = getUserData(id_user);
+    });
+  }
+  
   Widget build(context) {
     return Column(
       children: [
@@ -50,7 +62,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   //   ),
                   // ),
                   FutureBuilder(
-                      future: getUserData(widget.id_user),
+                      future: _futureUser,
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
                           return const Center(
@@ -58,15 +70,15 @@ class _ProfilePageState extends State<ProfilePage> {
                           );
                         }
                         if (snapshot.hasData) {
-                          List<UserData> data = snapshot.data as List<UserData>;
-                          if (data.isEmpty ||
-                              data[1].username == 'defaultUserName') {
-                            return const Center(
-                              child: Text("defultUserName"),
-                            );
-                          }
+                          UserData data = snapshot.data as UserData;
+                          // if (data.isEmpty ||
+                          //     data[1].username == 'defaultUserName') {
+                          //   return const Center(
+                          //     child: Text("defultUserName"),
+                          //   );
+                          // }
                           return Text(
-                            '${data[0].username}',
+                            '${data.username}',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -94,9 +106,13 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Expanded(
               child: TextButton(
                   onPressed: () {
-                    navigatorKey.currentState?.pushNamed("/profile/info",
-                        arguments: ProfileArguments(widget.id_user,
-                            widget.username_user, widget.address_user));
+                    navigatorKey.currentState
+                        ?.pushNamed("/profile/info",
+                            arguments: ProfileArguments(widget.id_user,
+                                widget.username_user, widget.address_user))
+                        .then((value) {
+                      updateValue(widget.id_user);
+                    });
                   },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -111,12 +127,20 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       TextButton(
                         onPressed: () {
-                          navigatorKey.currentState?.pushNamed("/profile/info");
+                          navigatorKey.currentState
+                              ?.pushNamed("/profile/info",
+                                  arguments: ProfileArguments(
+                                      widget.id_user,
+                                      widget.username_user,
+                                      widget.address_user))
+                              .then((value) {
+                            updateValue(widget.id_user);
+                          });
                         },
                         child: const Text('Profile Info',
                             style: TextStyle(
                               fontSize: 16,
-                              color: Colors.black,
+                              color: Color.fromARGB(255, 91, 90, 90),
                             )),
                       )
                     ],
@@ -214,10 +238,18 @@ class InfoProfilePage extends StatefulWidget {
 }
 
 class _InfoProfileState extends State<InfoProfilePage> {
+  late final args =
+      ModalRoute.of(context)!.settings.arguments as ProfileArguments;
+  late Future _userData = getUserData(args.id_user);
+
+  void updateValue(id_user) {
+    setState(() {
+      _userData = getUserData(id_user);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as ProfileArguments;
-    Future userList = getUserData(args.id_user);
     return Scaffold(
         appBar: AppBar(
             title: const Center(
@@ -226,7 +258,7 @@ class _InfoProfileState extends State<InfoProfilePage> {
         body: Padding(
             padding: const EdgeInsets.all(10),
             child: FutureBuilder(
-                future: userList,
+                future: _userData,
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return const Center(
@@ -234,26 +266,31 @@ class _InfoProfileState extends State<InfoProfilePage> {
                     );
                   }
                   if (snapshot.hasData) {
-                    List<UserData> data = snapshot.data as List<UserData>;
-                    if (data.isEmpty
-                        // || data[0].username == 'defaultUserName'
-                        ) {
-                      return const Center(
-                        child: Text("Data is empty"),
-                      );
-                    }
+                    UserData data = snapshot.data as UserData;
+                    // if (data.isEmpty
+                    //     // || data[0].username == 'defaultUserName'
+                    //     ) {
+                    //   return const Center(
+                    //     child: Text("Data is empty"),
+                    //   );
+                    // }
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("ID: ${data[0].ID_user}"),
-                        Text("Username: ${data[0].username}"),
-                        Text("Alamat: ${data[0].alamat}"),
+                        Text("ID: ${data.ID_user}"),
+                        Text("Username: ${data.username}"),
+                        Text("Alamat: ${data.alamat}"),
                         ElevatedButton(
                             onPressed: () {
-                              navigatorKey.currentState?.pushNamed(
-                                  "/profile/info/edit",
-                                  arguments: ProfileArguments(args.id_user,
-                                      args.username_user, args.address_user));
+                              navigatorKey.currentState
+                                  ?.pushNamed("/profile/info/edit",
+                                      arguments: ProfileArguments(
+                                          args.id_user,
+                                          args.username_user,
+                                          args.address_user))
+                                  .then((value) {
+                                updateValue(args.id_user);
+                              });
                             },
                             child: const Text('Edit username')),
                       ],
@@ -279,8 +316,8 @@ class _EditProfileState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as ProfileArguments;
-    print(args.id_user);
-    Future userList = getUserData(args.id_user);
+    // print(args.id_user);
+    // Future userData = getUserData(args.id_user);
     return Scaffold(
       appBar: AppBar(
           title: const Center(
@@ -303,11 +340,44 @@ class _EditProfileState extends State<EditProfilePage> {
             //   decoration: const InputDecoration(hintText: 'Enter new username'),
             // ),
             ElevatedButton(
-              onPressed: () {
-                sendUserData(args.id_user.toString(), _controllerUsername.text,
-                    _controllerAlamat.text);
-                Navigator.pop(context);
-                Navigator.pop(context);
+              onPressed: () async {
+                bool check = await sendUserData(args.id_user.toString(),
+                    _controllerUsername.text, _controllerAlamat.text);
+
+                if (check == true) {
+                  showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('Success'),
+                      content: const Text("Success updating the account."),
+                      actions: <Widget>[
+                        Center(
+                          child: TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('OK'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                } else {
+                  showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('Failed'),
+                      content: const Text(
+                          "Failed to updating the account, try again later."),
+                      actions: <Widget>[
+                        Center(
+                          child: TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('OK'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
               },
               child: const Text('Change Data'),
             ),
